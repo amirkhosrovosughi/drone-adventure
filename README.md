@@ -55,8 +55,35 @@ cd ~/drone-adventure/PX4-Autopilot
 make px4_sitl gz_x500
 </pre>
 
-In terminal 3:
+In terminal 3: 
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
-roslaunch drone_control keyboard_teleop
+ros2 run px4_command_handler px4_command_handler
 </pre>
+
+In terminal 4: 
+<pre>
+source ~/drone-adventure/drone_ws/install/setup.bash
+ros2 run keyboard_control keyboard_control_node
+</pre>
+
+Now, you should be able to control the drone's movement. To start the drone, press '1' in terminal 4.
+
+**Controls:**
+- Press 'w' to ascend
+- Press 's' to descend
+- Press 'a' to rotate anti-clockwise
+- Press 'd' to rotate clockwise
+
+- Press 'u' to move forwards
+- Press 'j' to move backwards
+- Press 'h' to move left
+- Press 'k' to move right
+
+- Press '+' to increase speed
+- Press '-' to decrease speed
+
+Feel free to adjust and customize the controls according to your preferences.
+
+
+Next: to be completed
