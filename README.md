@@ -6,6 +6,10 @@ Personal project to develop multi-agent localization and path planning tools for
 ## requirement
 - Ubuntu-22.04
 - ROS2 Humble
+- install 
+<pre>
+sudo apt install ros-humble-ros-gzgardenra
+</pre>
 
 ## installation:
 First clone the repo
@@ -52,16 +56,21 @@ MicroXRCEAgent udp4 -p 8888
 In terminal 2:
 <pre>
 cd ~/drone-adventure/PX4-Autopilot
-make px4_sitl gz_x500
+make px4_sitl gz_x500_depth
 </pre>
 
-In terminal 3: 
+In terminal 3:
+<pre>
+ros2 run ros_gz_image image_bridge /camera
+</pre>
+
+In terminal 4: 
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 run px4_command_handler px4_command_handler
 </pre>
 
-In terminal 4: 
+In terminal 5: 
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 run keyboard_control keyboard_control_node
@@ -85,5 +94,9 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 
 Feel free to adjust and customize the controls according to your preferences.
 
+To see the camera image, you can run below command in terminal 6 and select /camera topic
+<pre>
+ros2 run rqt_image_view rqt_image_view
+</pre>
 
 Next: to be completed
