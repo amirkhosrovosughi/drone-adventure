@@ -99,4 +99,11 @@ To see the camera image, you can run below command in terminal 6 and select /cam
 ros2 run rqt_image_view rqt_image_view
 </pre>
 
-Next: to be completed
+To run feature extraction, in termianl 7 run:
+<pre>
+ros2 run visual_feature_extraction visual_feature_extraction
+</pre>
+
+Next to be completed:
+- 2D + depth to 3D mapping
+- SLAM
