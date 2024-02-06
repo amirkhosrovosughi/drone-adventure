@@ -61,22 +61,27 @@ make px4_sitl gz_x500_depth
 
 In terminal 3:
 <pre>
-ros2 run ros_gz_image image_bridge /camera
+ros2 run ros_gz_image image_bridge /depth_camera
 </pre>
 
-In terminal 4: 
+In terminal 4:
 <pre>
-source ~/drone-adventure/drone_ws/install/setup.bash
-ros2 run px4_command_handler px4_command_handler
+ros2 run ros_gz_image image_bridge /camera
 </pre>
 
 In terminal 5: 
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
+ros2 run px4_command_handler px4_command_handler
+</pre>
+
+In terminal 6: 
+<pre>
+source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 run keyboard_control keyboard_control_node
 </pre>
 
-Now, you should be able to control the drone's movement. To start the drone, press '1' in terminal 4.
+Now, you should be able to control the drone's movement. To start the drone, press '1' in terminal 6.
 
 **Controls:**
 - Press 'w' to ascend
@@ -94,15 +99,16 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 
 Feel free to adjust and customize the controls according to your preferences.
 
-To see the camera image, you can run below command in terminal 6 and select /camera topic
+To see the camera image, you can run below command in terminal 7 and select /camera topic
 <pre>
 ros2 run rqt_image_view rqt_image_view
 </pre>
 
-To run feature extraction, in termianl 7 run:
+To run feature extraction, in termianl 8 run:
 <pre>
 ros2 run visual_feature_extraction visual_feature_extraction
 </pre>
+Above this publish topic /featureDetection/coordinate that shows relative position of the detected feature in the photo and corresponding depth. You can change option DEBUG_FEATURE to ON to visualize the detected features.  
 
 Next to be completed:
 - 2D + depth to 3D mapping
