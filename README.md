@@ -47,41 +47,46 @@ colcon build
  </pre>
 
 ## run
-Open three terminals.
-In terminal 1:
-<pre>
-MicroXRCEAgent udp4 -p 8888
-</pre>
-
-In terminal 2:
+Open 4 terminals.
+In terminal 1 run PX4 drone simulator:
 <pre>
 cd ~/drone-adventure/PX4-Autopilot
 make px4_sitl gz_x500_depth
 </pre>
 
+In terminal 2:
+<pre>
+MicroXRCEAgent udp4 -p 8888
+</pre>
+
 In terminal 3:
 <pre>
-ros2 run ros_gz_image image_bridge /depth_camera
+source ~/drone-adventure/drone_ws/install/setup.bash
+ros2 launch drone_launch drone_launch.py
 </pre>
 
-In terminal 4:
+Above launch file is equivalent of running below ros nodes:
 <pre>
 ros2 run ros_gz_image image_bridge /camera
-</pre>
-
-In terminal 5: 
-<pre>
-source ~/drone-adventure/drone_ws/install/setup.bash
+ros2 run ros_gz_image image_bridge /depth_camera
 ros2 run px4_command_handler px4_command_handler
+ros2 run visual_feature_extraction visual_feature_extraction
 </pre>
 
-In terminal 6: 
+image_bridge nodes provides gazeboo camera info as ros2 topic. To see the camera image, you can run below command and select /camera or /depth_camera topic
+<pre>
+ros2 run rqt_image_view rqt_image_view
+</pre> 
+px4_command_handler node listen to teleop and send commands to drone simulator through MicroXRCEAgent.
+visual_feature_extraction node publish topic /featureDetection/coordinate that shows relative position of the detected feature in the photo and corresponding depth. You can change option DEBUG_FEATURE to ON to visualize the detected features.  
+
+In terminal 4:
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 run keyboard_control keyboard_control_node
 </pre>
 
-Now, you should be able to control the drone's movement. To start the drone, press '1' in terminal 6.
+Now, you should be able to control the drone's movement. To start the drone, press '1' to arm the drone first.
 
 **Controls:**
 - Press 'w' to ascend
@@ -98,17 +103,6 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 - Press '-' to decrease speed
 
 Feel free to adjust and customize the controls according to your preferences.
-
-To see the camera image, you can run below command in terminal 7 and select /camera topic
-<pre>
-ros2 run rqt_image_view rqt_image_view
-</pre>
-
-To run feature extraction, in termianl 8 run:
-<pre>
-ros2 run visual_feature_extraction visual_feature_extraction
-</pre>
-Above this publish topic /featureDetection/coordinate that shows relative position of the detected feature in the photo and corresponding depth. You can change option DEBUG_FEATURE to ON to visualize the detected features.  
 
 Next to be completed:
 - 2D + depth to 3D mapping
