@@ -28,6 +28,26 @@ cd PX4-Autopilot/
 make px4_sitl
 </pre>
 
+Make these changes on PX4-Autopilot:
+
+1 - In `PX4-Autopilot/src/modules/simulation/gz_bridge/gz_env.sh.in` line 4 change
+<pre>
+export PX4_GZ_WORLDS=@PX4_SOURCE_DIR@/Tools/simulation/gz/worlds
+</pre>
+to
+<pre>
+export PX4_GZ_WORLDS=@PX4_SOURCE_DIR@/../drone_ws/src/drone_packages/simulation_resource/worlds
+</pre>
+
+2 - In `PX4-Autopilot/Tools/simulation/gz/models/x500_depth/model.sdf`, line , change from
+```xml
+<pose>.12 .03 .242 0 0 0</pose>
+```
+to
+```xml
+<pose>.12 .03 .242 0 0.785 0</pose>
+```
+
 ### install Micro-XRCE-DDS-Agent
 <pre>
 cd Micro-XRCE-DDS-Agent
