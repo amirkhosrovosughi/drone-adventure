@@ -122,8 +122,31 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 - Press '+' to increase speed
 - Press '-' to decrease speed
 
+- Press 'c' to enter cli command of movement of the robot and then press Eneter to run the command.
+  below is the list of the commands:
+
+  - **`nomove`**: The robot remains stationary (no movement).  
+  - **`gottoorigin`**: Moves the robot to the origin coordinates (0, 0) and hovers at 2 meters.  
+  - **`goto <x_coordinate> <y_coordinate> <z_coordinate> <heading_angle>`**: Moves the robot to an arbitrary point. You must provide four arguments:  
+    - `x_coordinate`: Target x-coordinate.  
+    - `y_coordinate`: Target y-coordinate.  
+    - `z_coordinate`: Target z-coordinate.  
+    - `heading_angle`: Desired heading angle in radians.  
+  - **`headto <heading_angle>`**: Rotates the robot to the specified heading angle (in radians).  
+  - **`headfw`**: Rotates the robot to face forward (`0` radians).  
+  - **`headbw`**: Rotates the robot to face backward (`π` radians).  
+  - **`headleft`**: Rotates the robot to face left (`-π/2` radians).  
+  - **`headright`**: Rotates the robot to face right (`+π/2` radians).
+
 Feel free to adjust and customize the controls according to your preferences.
 
+In terminal 5:
+You can run SLAM node, this module is still in progress and has not been finalized yet.
+<pre>
+ros2 run slam slam
+</pre>
+
+# already added, need to 
 Next to be completed:
-- 2D + depth to 3D mapping
 - SLAM
+- Visualization
