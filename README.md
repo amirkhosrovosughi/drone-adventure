@@ -135,8 +135,8 @@ Now, you should be able to control the drone's movement. To start the drone, pre
   - **`headto <heading_angle>`**: Rotates the robot to the specified heading angle (in radians).  
   - **`headfw`**: Rotates the robot to face forward (`0` radians).  
   - **`headbw`**: Rotates the robot to face backward (`π` radians).  
-  - **`headleft`**: Rotates the robot to face left (`-π/2` radians).  
-  - **`headright`**: Rotates the robot to face right (`+π/2` radians).
+  - **`headleft`**: Rotates the robot to face left (`+π/2` radians).  
+  - **`headright`**: Rotates the robot to face right (`-π/2` radians).
 
 Feel free to adjust and customize the controls according to your preferences.
 
@@ -146,7 +146,6 @@ You can run SLAM node, this module is still in progress and has not been finaliz
 ros2 run slam slam
 </pre>
 
-# already added, need to 
-Next to be completed:
+## Next to be completed:
 - SLAM
 - Visualization
