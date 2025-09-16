@@ -91,6 +91,7 @@ ros2 run ros_gz_image image_bridge /camera
 ros2 run ros_gz_image image_bridge /depth_camera
 ros2 run px4_command_handler px4_command_handler
 ros2 run visual_feature_extraction visual_feature_extraction
+ros2 run slam slam
 </pre>
 
 image_bridge nodes provides gazeboo camera info as ros2 topic. To see the camera image, you can run below command and select /camera or /depth_camera topic
@@ -146,6 +147,15 @@ You can run SLAM node, this module is still in progress and has not been finaliz
 ros2 run slam slam
 </pre>
 
+If you want to see visualization of SLAM, in a new terminal run
+<pre>
+ ros2 launch slam_visualization slam_visualization_launch.py
+</pre>
+
+And select the topic /visualization_marker on opened rviz. 
+
+## Debugging tools:
+
+
 ## Next to be completed:
-- SLAM
-- Visualization
+- SLAM variations
