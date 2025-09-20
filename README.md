@@ -157,5 +157,17 @@ And select the topic /visualization_marker on opened rviz.
 ## Debugging tools:
 
 
+## Documentation
+To explore the documentation, open this file in your browser after generating documents:
+
+[📖 Open Documentation (index.html)](drone_ws/doc/html/index.html)
+
+### Update or regenerate documents
+<pre>
+cd ~/drone-adventure/drone_ws/
+cmake -S . -B build-docs
+cmake --build build-docs --target doc_doxygen
+</pre>
+
 ## Next to be completed:
 - SLAM variations

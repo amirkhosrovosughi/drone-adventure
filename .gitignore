@@ -1,4 +1,6 @@
 drone_ws/build/
 drone_ws/install/
 drone_ws/log/
+drone_ws/build-docs/
+drone_ws/doc/
 .vscode/
