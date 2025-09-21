@@ -60,11 +60,23 @@ sudo ldconfig /usr/local/lib/
 </pre>
 
 ### build ROS packages
- <pre>
+<pre>
 cd drone_ws
 source /opt/ros/humble/setup.bash
 colcon build
- </pre>
+</pre>
+
+## running unit test
+<pre>
+colcon build --cmake-args -DBUILD_TESTING=ON
+colcon test
+colcon test-result --verbos
+</pre>
+
+hint: can use `--packages-select` to select to build or test a specific pacakge. For examlpe:
+<pre>
+colcon build --packages-select common_utilities --cmake-args -DBUILD_TESTING=ON
+</pre>
 
 ## run
 Open 4 terminals.
