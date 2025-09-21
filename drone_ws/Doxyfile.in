@@ -1,8 +1,8 @@
 PROJECT_NAME           = @PROJECT_NAME@
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY       = ../../../doc
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
-INPUT                  = src/drone_packages
+INPUT                  = ../
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 QUIET                  = YES
