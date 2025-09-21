@@ -1,8 +1,14 @@
 PROJECT_NAME           = @PROJECT_NAME@
-OUTPUT_DIRECTORY       = ../../../doc
+
+# Output goes into the build tree
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doc
+
 GENERATE_HTML          = YES
 GENERATE_LATEX         = NO
-INPUT                  = ../
+
+# Use the source tree as input (adjust if needed)
+INPUT                  = @CMAKE_CURRENT_SOURCE_DIR@/../..
 RECURSIVE              = YES
+
 EXTRACT_ALL            = YES
 QUIET                  = YES
