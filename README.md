@@ -78,6 +78,15 @@ hint: can use `--packages-select` to select to build or test a specific pacakge.
 colcon build --packages-select common_utilities --cmake-args -DBUILD_TESTING=ON
 </pre>
 
+## Environment setup:
+Before running the simulation, make sure Gazebo can find your custom models.
+
+From the **root of the project**, run the following command to add your `simulation_resource/models` folder to the Gazebo model path:
+<pre>
+echo "export GZ_SIM_RESOURCE_PATH=$(pwd)/drone_ws/src/drone_packages/simulation_resource/models:\$GZ_SIM_RESOURCE_PATH" >> ~/.bashrc
+source ~/.bashrc
+</pre>
+
 ## run
 Open 4 terminals.
 In terminal 1 run PX4 drone simulator:
@@ -183,3 +192,15 @@ cmake --build build-docs --target doc_doxygen
 
 ## Next to be completed:
 - SLAM variations
+
+## Install ONNX RunTime for running Deep Object detection:
+<pre>
+cd ~
+wget https://github.com/microsoft/onnxruntime/releases/download/v1.19.0/onnxruntime-linux-x64-1.19.0.tgz
+
+tar -xzf onnxruntime-linux-x64-1.19.0.tgz
+mv ~/onnxruntime-linux-x64-1.19.0 ~/onnxruntime
+
+echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/onnxruntime/lib' >> ~/.bashrc
+source ~/.bashrc
+</pre>
