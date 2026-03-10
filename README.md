@@ -1,45 +1,46 @@
 # Drone Adventure Project
 
-Personal project to develop multi-agent localization and path planning tools for drone
+Personal project to develop multi-agent localization and path-planning tools for drones.
 
 
-## requirement
-- Ubuntu-22.04
+## Requirements
+- Ubuntu 22.04
 - ROS2 Humble
-- install 
+- Install:
 <pre>
-sudo apt install ros-humble-ros-gzgardenra
+sudo apt install ros-humble-ros-gzgarden
 </pre>
 
-## installation:
-First clone the repo
+## Installation
+First, clone the repository:
 
 <pre>
 sudo apt update
 git clone https://github.com/amirkhosrovosughi/drone-adventure.git
+cd drone-adventure
 git submodule update --init --recursive
 </pre>
 
 
-### install PX4-Autopilot
+### Install PX4-Autopilot
 <pre>
 bash ./PX4-Autopilot/Tools/setup/ubuntu.sh
 cd PX4-Autopilot/
 make px4_sitl
 </pre>
 
-Make these changes on PX4-Autopilot:
+Make these changes in `PX4-Autopilot`:
 
-1 - In `PX4-Autopilot/src/modules/simulation/gz_bridge/gz_env.sh.in` line 4 change
+1. In `PX4-Autopilot/src/modules/simulation/gz_bridge/gz_env.sh.in`, line 4, change:
 <pre>
 export PX4_GZ_WORLDS=@PX4_SOURCE_DIR@/Tools/simulation/gz/worlds
 </pre>
-to
+to:
 <pre>
 export PX4_GZ_WORLDS=@PX4_SOURCE_DIR@/../drone_ws/src/drone_packages/simulation_resource/worlds
 </pre>
 
-2 - In `PX4-Autopilot/Tools/simulation/gz/models/x500_depth/model.sdf`, line , change from
+2. In `PX4-Autopilot/Tools/simulation/gz/models/x500_depth/model.sdf`, update the camera pose from:
 ```xml
 <pose>.12 .03 .242 0 0 0</pose>
 ```
@@ -48,7 +49,7 @@ to
 <pose>.12 .03 .242 0 0.785 0</pose>
 ```
 
-### install Micro-XRCE-DDS-Agent
+### Install Micro-XRCE-DDS-Agent
 <pre>
 cd Micro-XRCE-DDS-Agent
 mkdir build
@@ -59,26 +60,26 @@ sudo make install
 sudo ldconfig /usr/local/lib/
 </pre>
 
-### build ROS packages
+### Build ROS Packages
 <pre>
 cd drone_ws
 source /opt/ros/humble/setup.bash
 colcon build
 </pre>
 
-## running unit test
+## Running Unit Tests
 <pre>
 colcon build --cmake-args -DBUILD_TESTING=ON
 colcon test
-colcon test-result --verbos
+colcon test-result --verbose
 </pre>
 
-hint: can use `--packages-select` to select to build or test a specific pacakge. For examlpe:
+Hint: use `--packages-select` to build or test a specific package. For example:
 <pre>
 colcon build --packages-select common_utilities --cmake-args -DBUILD_TESTING=ON
 </pre>
 
-## Environment setup:
+## Environment Setup
 Before running the simulation, make sure Gazebo can find your custom models.
 
 From the **root of the project**, run the following command to add your `simulation_resource/models` folder to the Gazebo model path:
@@ -87,26 +88,36 @@ echo "export GZ_SIM_RESOURCE_PATH=$(pwd)/drone_ws/src/drone_packages/simulation_
 source ~/.bashrc
 </pre>
 
-## run
-Open 4 terminals.
-In terminal 1 run PX4 drone simulator:
+## Run
+Open 3 terminals.
+In terminal 1, run the PX4 drone simulator script:
+<pre>
+./run_drone_sim.sh
+</pre>
+
+
+This script performs the same startup sequence as the following commands and ensures the world is ready before spawning PX4 (to avoid startup race conditions):
 <pre>
 cd ~/drone-adventure/PX4-Autopilot
 make px4_sitl gz_x500_depth
 </pre>
 
-In terminal 2:
 <pre>
 MicroXRCEAgent udp4 -p 8888
 </pre>
 
-In terminal 3:
+If startup fails, a previous simulation process may still be running. In that case, run this cleanup script:
+<pre>
+./stop_drone_sim.sh
+</pre>
+
+In terminal 2:
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 launch drone_launch drone_launch.py
 </pre>
 
-Above launch file is equivalent of running below ros nodes:
+The launch file above is equivalent to running these ROS2 nodes:
 <pre>
 ros2 run ros_gz_image image_bridge /camera
 ros2 run ros_gz_image image_bridge /depth_camera
@@ -115,14 +126,13 @@ ros2 run visual_feature_extraction visual_feature_extraction
 ros2 run slam slam
 </pre>
 
-image_bridge nodes provides gazeboo camera info as ros2 topic. To see the camera image, you can run below command and select /camera or /depth_camera topic
+`image_bridge` nodes provide Gazebo camera streams as ROS2 topics. To view the camera image, run the command below and select `camera` or `/depth_camera`:
 <pre>
 ros2 run rqt_image_view rqt_image_view
 </pre> 
-px4_command_handler node listen to teleop and send commands to drone simulator through MicroXRCEAgent.
-visual_feature_extraction node publish topic /featureDetection/coordinate that shows relative position of the detected feature in the photo and corresponding depth. You can change option DEBUG_FEATURE to ON to visualize the detected features.  
+`px4_command_handler` listens to teleop commands and sends commands to the drone simulator through MicroXRCEAgent.
 
-In terminal 4:
+In terminal 3:
 <pre>
 source ~/drone-adventure/drone_ws/install/setup.bash
 ros2 run keyboard_control keyboard_control_node
@@ -144,11 +154,11 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 - Press '+' to increase speed
 - Press '-' to decrease speed
 
-- Press 'c' to enter cli command of movement of the robot and then press Eneter to run the command.
-  below is the list of the commands:
+- Press 'c' to enter a movement CLI command, then press Enter to run it.
+  Available commands:
 
   - **`nomove`**: The robot remains stationary (no movement).  
-  - **`gottoorigin`**: Moves the robot to the origin coordinates (0, 0) and hovers at 2 meters.  
+  - **`gotoorigin`**: Moves the robot to the origin coordinates (0, 0) and hovers at 2 meters.  
   - **`goto <x_coordinate> <y_coordinate> <z_coordinate> <heading_angle>`**: Moves the robot to an arbitrary point. You must provide four arguments:  
     - `x_coordinate`: Target x-coordinate.  
     - `y_coordinate`: Target y-coordinate.  
@@ -162,38 +172,38 @@ Now, you should be able to control the drone's movement. To start the drone, pre
 
 Feel free to adjust and customize the controls according to your preferences.
 
-In terminal 5:
-You can run SLAM node, this module is still in progress and has not been finalized yet.
-<pre>
-ros2 run slam slam
-</pre>
 
 If you want to see visualization of SLAM, in a new terminal run
 <pre>
  ros2 launch slam_visualization slam_visualization_launch.py
 </pre>
 
-And select the topic /visualization_marker on opened rviz. 
+Then select the `/visualization_marker` topic in the opened RViz window.
 
-## Debugging tools:
+## Debugging Tools
+To monitor machine resources, run the script below in a new terminal. It reports CPU, GPU, and memory usage during execution, including average and peak values at the end.
+
+<pre>
+./monitor_resources.sh
+</pre>
 
 
 ## Documentation
-To explore the documentation, open this file in your browser after generating documents:
+To explore the documentation, open this file in your browser after generating the docs:
 
 [📖 Open Documentation (index.html)](drone_ws/doc/html/index.html)
 
-### Update or regenerate documents
+### Update or Regenerate Documentation
 <pre>
 cd ~/drone-adventure/drone_ws/
 cmake -S . -B build-docs
 cmake --build build-docs --target doc_doxygen
 </pre>
 
-## Next to be completed:
-- SLAM variations
+## Next To Be Completed
+- Autonomous drone movement using RL to generate a map and localize falut within it
 
-## Install ONNX RunTime for running Deep Object detection:
+## Install ONNX Runtime for Deep Object Detection
 <pre>
 cd ~
 wget https://github.com/microsoft/onnxruntime/releases/download/v1.19.0/onnxruntime-linux-x64-1.19.0.tgz
