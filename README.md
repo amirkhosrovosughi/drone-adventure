@@ -180,7 +180,45 @@ If you want to see visualization of SLAM, in a new terminal run
 
 Then select the `/visualization_marker` topic in the opened RViz window.
 
-## Debugging Tools
+## Diagnostics and Build Options
+### Logging runtime data in CSV format
+If you build the project with the `STORE_DEBUG_DATA` flag, you can log values during runtime.
+Example:
+<pre>
+#ifdef STORE_DEBUG_DATA
+  data_logging_utils::DataLogger::log("robotPose.position.x", _robotPose.position.x);
+#endif
+</pre>
+
+By default, logs are written to `~/ros_data_logging` in a timestamped folder created when the simulation starts. This is useful for plotting signals and debugging algorithms.
+You can use scirpt `data_logging_utils/scripts/plot_data_logger.py` for plotting the data. See the documentation on that script for instruction on how to use it.
+
+### Compile-time flag options
+You can pass compile-time flags to change package behavior.
+
+#### `slam` package options
+You can enable one SLAM algorithm implementation:
+- `SLAM_EKF`: Extended Kalman Filter (EKF) SLAM
+- `SLAM_GRAPH`: Least-squares graph-based SLAM
+- `SLAM_FAST_SLAM`: Particle filter-based FastSLAM
+
+Example:
+<pre>
+colcon build --packages-select slam --cmake-args -DSLAM_EKF=ON
+</pre>
+
+If no SLAM flag is provided, `SLAM_EKF` is used by default.
+
+#### `feature_2dto3d_transfer` package options
+You can choose which feature topic(s) this package publishes (used by `slam` as observation input):
+- `ONLY_BBOX`: publish only bounding-box coordinates in the image frame
+- `ONLY_3D_POINT`: publish only extracted 3D points for detections with valid depth, and ignore detections without depth
+
+If no flag is provided, both topics are published: 3D coordinates when depth is available, otherwise bounding boxes.
+
+Tip: run a clean build when switching compile-time options.
+
+### Monitoring system resources
 To monitor machine resources, run the script below in a new terminal. It reports CPU, GPU, and memory usage during execution, including average and peak values at the end.
 
 <pre>
