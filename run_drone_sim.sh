@@ -40,23 +40,61 @@ create_service_ready() {
   gz service -l 2>/dev/null | grep -q "^/world/${WORLD}/create$"
 }
 
+print_server_debug_info() {
+  local server_log="$1"
+  if [[ -f "${server_log}" ]]; then
+    echo "[INFO] Last 80 lines from server log (${server_log}):"
+    tail -n 80 "${server_log}" || true
+    echo "[INFO] Error-like lines from server log:"
+    grep -Ei "\\[err\\]|error|failed|unable|invalid|exception" "${server_log}" | tail -n 40 || true
+  else
+    echo "[WARN] Server log not found: ${server_log}"
+  fi
+}
+
+cleanup_log_watcher() {
+  if [[ -n "${LOG_WATCH_PID:-}" ]] && kill -0 "${LOG_WATCH_PID}" >/dev/null 2>&1; then
+    kill "${LOG_WATCH_PID}" >/dev/null 2>&1 || true
+  fi
+}
+
+SERVER_LOG="/tmp/gz_${WORLD}_server.log"
+GUI_LOG="/tmp/gz_${WORLD}_gui.log"
+
+trap cleanup_log_watcher EXIT
+
 if world_is_running; then
   echo "[INFO] Gazebo world '${WORLD}' already running."
 else
   echo "[INFO] Starting Gazebo server with ${WORLD_FILE}"
-  gz sim --verbose=1 -r -s "${WORLD_FILE}" >/tmp/gz_${WORLD}_server.log 2>&1 &
+  rm -f "${SERVER_LOG}" "${GUI_LOG}"
+  gz sim --verbose=1 -r -s "${WORLD_FILE}" >"${SERVER_LOG}" 2>&1 &
   GZ_SERVER_PID=$!
   echo "[INFO] Gazebo server PID: ${GZ_SERVER_PID}"
 
+  # Stream server errors live so world/model issues are visible immediately.
+  (
+    tail -n 0 -F "${SERVER_LOG}" 2>/dev/null \
+      | grep --line-buffered -Ei "\\[err\\]|error|failed|unable|invalid|exception" \
+      | sed -u "s/^/[GZ SERVER] /"
+  ) &
+  LOG_WATCH_PID=$!
+
   # Start GUI unless already running.
   if ! pgrep -af "gz sim -g" >/dev/null 2>&1; then
-    gz sim -g >/tmp/gz_${WORLD}_gui.log 2>&1 &
+    gz sim -g >"${GUI_LOG}" 2>&1 &
     echo "[INFO] Gazebo GUI started."
   fi
 fi
 
 echo "[INFO] Waiting for '/world/${WORLD}/create' service..."
 for _ in $(seq 1 120); do
+  if [[ -n "${GZ_SERVER_PID:-}" ]] && ! kill -0 "${GZ_SERVER_PID}" >/dev/null 2>&1; then
+    echo "[ERROR] Gazebo server process exited before '/world/${WORLD}/create' became available."
+    print_server_debug_info "${SERVER_LOG}"
+    exit 1
+  fi
+
   if create_service_ready; then
     echo "[INFO] Gazebo is ready."
     break
@@ -66,7 +104,7 @@ done
 
 if ! create_service_ready; then
   echo "[ERROR] Gazebo create service not ready after 60s."
-  echo "[HINT] Check: /tmp/gz_${WORLD}_server.log"
+  print_server_debug_info "${SERVER_LOG}"
   exit 1
 fi
 
